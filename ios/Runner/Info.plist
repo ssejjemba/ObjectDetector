@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We use this access to let you select images to identify.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We use this to let you capture objects to be identified with the phone camera.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We don't really use this at all but is a requirement for the image picker.</string>
 </dict>
 </plist>
