@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -8,6 +11,20 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  File? _image;
+
+  Future _getImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
   Widget _buildButton(IconData icon, String text, VoidCallback onPressed) {
     return SizedBox(
       width: 150,
@@ -85,9 +102,13 @@ class _MainScreenState extends State<MainScreen> {
                   Expanded(
                     flex: 4,
                     child: Container(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage("assets/images/placeholder.png"),
+                          image: _image != null
+                              ? FileImage(_image!)
+                              : const AssetImage(
+                                      "assets/images/placeholder.png")
+                                  as ImageProvider<Object>,
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -99,9 +120,10 @@ class _MainScreenState extends State<MainScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            _buildButton(Icons.camera_alt, "Camera", () {}),
-                            _buildButton(
-                                Icons.photo_album_outlined, "Gallery", () {}),
+                            _buildButton(Icons.camera_alt, "Camera",
+                                () => _getImage(ImageSource.camera)),
+                            _buildButton(Icons.photo_album_outlined, "Gallery",
+                                () => _getImage(ImageSource.gallery)),
                           ],
                         ),
                       )),
