@@ -14,7 +14,7 @@ class EyePhoneLoading extends StatelessWidget {
         child: Theme(
           data: ThemeData(
             cupertinoOverrideTheme:
-                const CupertinoThemeData(brightness: Brightness.light),
+                const CupertinoThemeData(brightness: Brightness.dark),
           ),
           child: const CupertinoActivityIndicator(
             radius: 24,

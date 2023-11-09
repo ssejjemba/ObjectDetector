@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cats_and_dogs/common/loading/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -12,6 +13,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   File? _image;
+
+  bool _isLoading = false;
 
   Future _getImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
@@ -56,81 +59,103 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  _detectObjectsInImage() {
+    if (_image == null) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+  }
+
+  Widget _buildLoader() {
+    if (!_isLoading) {
+      return const SizedBox.shrink();
+    }
+    return const EyePhoneLoading();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                  size: 30,
+        child: Stack(children: [
+          Column(children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 30,
+                  ),
                 ),
-              ),
-              const Text(
-                "Detect Object",
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 24.0,
-                  color: Colors.white,
+                const Text(
+                  "Detect Object",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 24.0,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 30,
-                ),
-              )
-            ],
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: _image != null
-                              ? FileImage(_image!)
-                              : const AssetImage(
-                                      "assets/images/placeholder.png")
-                                  as ImageProvider<Object>,
-                          fit: BoxFit.contain,
+                IconButton(
+                  onPressed: _detectObjectsInImage,
+                  icon: const Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                )
+              ],
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: _image != null
+                                ? FileImage(_image!)
+                                : const AssetImage(
+                                        "assets/images/placeholder.png")
+                                    as ImageProvider<Object>,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                      flex: 2,
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _buildButton(Icons.camera_alt, "Camera",
-                                () => _getImage(ImageSource.camera)),
-                            _buildButton(Icons.photo_album_outlined, "Gallery",
-                                () => _getImage(ImageSource.gallery)),
-                          ],
-                        ),
-                      )),
-                ],
+                    Expanded(
+                        flex: 2,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildButton(Icons.camera_alt, "Camera",
+                                  () => _getImage(ImageSource.camera)),
+                              _buildButton(
+                                  Icons.photo_album_outlined,
+                                  "Gallery",
+                                  () => _getImage(ImageSource.gallery)),
+                            ],
+                          ),
+                        )),
+                  ],
+                ),
               ),
             ),
-          )
+          ]),
+          _buildLoader()
         ]),
       ),
     );
