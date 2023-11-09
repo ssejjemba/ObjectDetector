@@ -1,3 +1,4 @@
+import 'package:cats_and_dogs/screens/main/main_screen.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatelessWidget {
@@ -46,7 +47,14 @@ class MyHomePage extends StatelessWidget {
                     const SizedBox(height: 35),
                     FittedBox(
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MainScreen(),
+                            ),
+                          );
+                        },
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 25),
                           padding: const EdgeInsets.symmetric(
