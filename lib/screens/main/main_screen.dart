@@ -16,6 +16,11 @@ class _MainScreenState extends State<MainScreen> {
 
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   Future _getImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
 
